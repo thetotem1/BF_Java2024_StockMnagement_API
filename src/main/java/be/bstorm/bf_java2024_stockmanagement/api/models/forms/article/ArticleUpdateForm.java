@@ -1,4 +1,4 @@
-package be.bstorm.bf_java2024_stockmanagement.api.models.forms;
+package be.bstorm.bf_java2024_stockmanagement.api.models.forms.article;
 
 import be.bstorm.bf_java2024_stockmanagement.dl.entities.Article;
 import be.bstorm.bf_java2024_stockmanagement.dl.enums.VAT;

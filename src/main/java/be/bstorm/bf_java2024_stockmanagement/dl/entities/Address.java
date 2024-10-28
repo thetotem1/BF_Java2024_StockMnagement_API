@@ -11,12 +11,12 @@ import lombok.*;
 @EqualsAndHashCode @ToString
 public class Address {
 
-    @Column(nullable = false)
+    @Column(nullable = false,length = 100)
     private String street;
-    @Column(nullable = false)
+    @Column(nullable = false,length = 100)
     private String city;
-    @Column(nullable = true)
+    @Column(nullable = true,length = 100)
     private String municipality;
-    @Column(nullable = false)
+    @Column(nullable = false,length = 10)
     private String zip;
 }

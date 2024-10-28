@@ -1,10 +1,10 @@
 package be.bstorm.bf_java2024_stockmanagement.il.initializers;
 
 import be.bstorm.bf_java2024_stockmanagement.dal.repositories.*;
-import be.bstorm.bf_java2024_stockmanagement.dl.entities.Article;
-import be.bstorm.bf_java2024_stockmanagement.dl.entities.Category;
-import be.bstorm.bf_java2024_stockmanagement.dl.entities.Role;
-import be.bstorm.bf_java2024_stockmanagement.dl.entities.StockMovement;
+import be.bstorm.bf_java2024_stockmanagement.dl.entities.*;
+import be.bstorm.bf_java2024_stockmanagement.dl.entities.person.Client;
+import be.bstorm.bf_java2024_stockmanagement.dl.entities.person.Extern;
+import be.bstorm.bf_java2024_stockmanagement.dl.entities.person.Supplier;
 import be.bstorm.bf_java2024_stockmanagement.dl.entities.person.User;
 import be.bstorm.bf_java2024_stockmanagement.dl.enums.StockMovementType;
 import be.bstorm.bf_java2024_stockmanagement.dl.enums.VAT;
@@ -27,6 +27,7 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ExternRepository externRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -137,6 +138,38 @@ public class DataInitializer implements CommandLineRunner {
                 admin.addRole(roleRepository.findByName("USER").orElseThrow());
 
                 userRepository.saveAll(List.of(admin, user));
+            }
+
+            if(externRepository.count() == 0) {
+                List<Extern> externs = List.of(
+                        new Client(
+                                UUID.randomUUID(),
+                                "Client",
+                                "Client",
+                                "Client@test.be",
+                                "0498969598",
+                                new Address(
+                                        "Rue cerisier 18",
+                                        "Truc",
+                                        "Truc",
+                                        "4569"
+                                )
+                        ),
+                        new Supplier(
+                                UUID.randomUUID(),
+                                "Supplier",
+                                "Supplier",
+                                "Supplier@test.be",
+                                "0495969598",
+                                new Address(
+                                        "Rue cerisier 18",
+                                        "Truc",
+                                        "Truc",
+                                        "4569"
+                                )
+                        )
+                );
+                externRepository.saveAll(externs);
             }
         }
     }

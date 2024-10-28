@@ -25,4 +25,10 @@ public abstract class Extern extends Person {
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
+
+    public Extern(String firstName, String lastName, String email, String phoneNumber, Address address) {
+        super(firstName, lastName, email);
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
 }

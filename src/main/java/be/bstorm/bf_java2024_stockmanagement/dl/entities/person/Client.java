@@ -10,10 +10,14 @@ import lombok.ToString;
 import java.util.UUID;
 
 @Entity
-@DiscriminatorValue("client")
+@DiscriminatorValue("CLIENT")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true) @ToString(callSuper = true)
 public class Client extends Extern{
+
+    public Client(String firstName, String lastName, String email, String phoneNumber, Address address) {
+        super(firstName, lastName, email, phoneNumber, address);
+    }
 
     public Client(UUID id, String firstName, String lastName, String email, String phoneNumber, Address address) {
         super(id, firstName, lastName, email, phoneNumber, address);

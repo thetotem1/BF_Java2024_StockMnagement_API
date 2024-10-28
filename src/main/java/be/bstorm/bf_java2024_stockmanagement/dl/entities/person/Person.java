@@ -25,4 +25,10 @@ public abstract class Person extends BaseEntity {
         this.lastName = lastName;
         this.email = email;
     }
+
+    public Person(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
 }
