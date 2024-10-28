@@ -67,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
         article.setId(UUID.randomUUID());
 
-        if(!image.isEmpty()) {
+        if(image != null && !image.isEmpty()) {
             article.setPicture(saveImage(image));
         }
         return articleRepository.save(article);
@@ -95,7 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
         existingArticle.setVat(article.getVat());
         existingArticle.setCategory(article.getCategory());
 
-        if(!image.isEmpty()) {
+        if(image != null && !image.isEmpty()) {
             existingArticle.setPicture(saveImage(image));
         }
 

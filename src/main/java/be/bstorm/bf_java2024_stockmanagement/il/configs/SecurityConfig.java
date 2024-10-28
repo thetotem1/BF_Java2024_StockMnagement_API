@@ -28,7 +28,7 @@ public class SecurityConfig {
 //                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
 //                                .requestMatchers("/user/**").hasAuthority("USER")
                         r.requestMatchers("/styles/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .formLogin(form -> form.loginPage("/login").permitAll()
                         .defaultSuccessUrl("/article")
                 )

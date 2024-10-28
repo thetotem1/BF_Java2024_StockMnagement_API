@@ -1,6 +1,6 @@
-package be.bstorm.bf_java2024_stockmanagement.pl.validators;
+package be.bstorm.bf_java2024_stockmanagement.api.validators;
 
-import be.bstorm.bf_java2024_stockmanagement.pl.validators.annotations.ImageFormat;
+import be.bstorm.bf_java2024_stockmanagement.api.validators.annotations.ImageFormat;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;
