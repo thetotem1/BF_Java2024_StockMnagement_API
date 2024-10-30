@@ -3,11 +3,15 @@ package be.bstorm.bf_java2024_stockmanagement.bll.services.security.impls;
 import be.bstorm.bf_java2024_stockmanagement.bll.services.security.AuthService;
 import be.bstorm.bf_java2024_stockmanagement.dal.repositories.UserRepository;
 import be.bstorm.bf_java2024_stockmanagement.dl.entities.person.User;
+import be.bstorm.bf_java2024_stockmanagement.il.utils.MailerThread;
+import be.bstorm.bf_java2024_stockmanagement.il.utils.MailerUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.Random;
@@ -19,8 +23,10 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailerUtils mailerUtils;
 
     @Override
+    @Transactional
     public void register(User user) {
 
         if(userRepository.existsByEmail(user.getEmail())){
@@ -30,7 +36,18 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(password));
         user.setId(UUID.randomUUID());
         userRepository.save(user);
-        //TODO send mail
+
+        Context context = new Context();
+        context.setVariable("email", user.getEmail());
+        context.setVariable("password", password);
+        MailerThread mailerThread = mailerUtils.createThread(
+                "Welcome",
+                "sendPassword",
+                context,
+                user.getEmail()
+        );
+        Thread thread = new Thread(mailerThread);
+        thread.start();
     }
 
     @Override
