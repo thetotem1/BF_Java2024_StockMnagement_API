@@ -23,23 +23,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r ->
-//                        r.requestMatchers("/article/**").authenticated()
-//                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
-//                                .requestMatchers("/user/**").hasAuthority("USER")
-                        r.requestMatchers("/styles/**").permitAll()
-                        .anyRequest().permitAll())
-                .formLogin(form -> form.loginPage("/login").permitAll()
-                        .defaultSuccessUrl("/article")
-                )
-                .logout(logout -> logout.logoutUrl("/logout")
-                        .logoutSuccessUrl("/article")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"))
-                .exceptionHandling(e ->
-                        e.accessDeniedPage("/login?error=true")
-                )
-                .csrf(AbstractHttpConfigurer::disable);
+                        r.anyRequest().permitAll());
 
         return http.build();
     }

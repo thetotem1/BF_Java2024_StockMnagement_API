@@ -27,6 +27,15 @@ public class User extends Person implements UserDetails {
 //        this.roles = new HashSet<>();
 //    }
 
+    public User(String email, String password) {
+        super(email);
+        this.password = password;
+    }
+
+    public User(String firstName, String lastName, String email) {
+        super(firstName, lastName, email);
+    }
+
     public User(UUID id, String firstName, String lastName, String email, String password) {
         super(id, firstName, lastName, email);
         this.password = password;

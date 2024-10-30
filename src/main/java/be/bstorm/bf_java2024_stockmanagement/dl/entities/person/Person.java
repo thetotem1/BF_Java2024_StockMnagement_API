@@ -19,6 +19,10 @@ public abstract class Person extends BaseEntity {
     @Column(nullable = false, unique = true, length = 320)
     private String email;
 
+    public Person(String email) {
+        this.email = email;
+    }
+
     public Person(UUID id, String firstName, String lastName, String email) {
         super(id);
         this.firstName = firstName;
