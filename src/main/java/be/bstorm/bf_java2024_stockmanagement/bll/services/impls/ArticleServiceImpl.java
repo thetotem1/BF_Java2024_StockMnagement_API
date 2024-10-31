@@ -15,8 +15,22 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * <p>Implementation of the {@link ArticleService} interface that provides CRUD operations for {@link Article} entities.</p>
- * <p>This service includes business logic related to articles, such as image storage, validation checks, and retrieval of active articles only.</p>
+ * Implementation of the {@link ArticleService} interface that provides CRUD operations for {@link Article} entities.
+ * This service includes business logic related to articles, such as image storage, validation checks, and retrieval of active articles only.
+ *
+ * <p>Methods:
+ * <ul>
+ * <li>{@link #findAll()} - Retrieves a list of all active articles.</li>
+ * <li>{@link #findById(UUID)} - Finds an article by its unique identifier, ensuring it is not marked as deleted.</li>
+ * <li>{@link #save(Article, MultipartFile)} - Saves a new article with optional image storage, ensuring a unique designation.</li>
+ * <li>{@link #update(Article, MultipartFile)} - Updates an article's details and optionally replaces its image.</li>
+ * <li>{@link #delete(UUID)} - Marks an article as deleted by its ID.</li>
+ * <li>{@link #saveImage(MultipartFile)} - Stores an image on the server and returns its file name.</li>
+ * </ul>
+ * </p>
+ *
+ * @see ArticleService
+ * @see Article
  */
 @Service
 @RequiredArgsConstructor
@@ -25,9 +39,9 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
 
     /**
-     * <p>Retrieves a list of all active articles from the repository.</p>
+     * Retrieves a list of all active articles from the repository.
      *
-     * @return a {@link List} of active {@link Article} objects.
+     * @return A {@link List} of active {@link Article} objects.
      */
     @Override
     public List<Article> findAll() {
@@ -35,58 +49,57 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * <p>Retrieves an article by its unique identifier (UUID).</p>
-     * <p>If the article is marked as deleted, a {@link RuntimeException} is thrown.</p>
+     * Retrieves an article by its unique identifier (UUID).
+     * If the article is marked as deleted, a {@link RuntimeException} is thrown.
      *
-     * @param id the UUID of the article to retrieve.
-     * @return the {@link Article} if found and active.
-     * @throws RuntimeException if the article is marked as deleted.
+     * @param id The UUID of the article to retrieve.
+     * @return The {@link Article} if found and active.
+     * @throws RuntimeException If the article is marked as deleted.
      */
     @Override
     public Article findById(UUID id) {
         Article article = articleRepository.findById(id).orElseThrow();
-        if(article.isDeleted()){
+        if (article.isDeleted()) {
             throw new RuntimeException("Article deleted");
         }
         return article;
     }
 
     /**
-     * <p>Saves a new article entity with a unique identifier. If an image is provided, it is stored on the server.</p>
-     * <p>Validates that the article designation is unique before saving.</p>
+     * Saves a new article entity with a unique identifier. If an image is provided, it is stored on the server.
+     * Validates that the article designation is unique before saving.
      *
-     * @param article the {@link Article} entity to save.
-     * @param image a {@link MultipartFile} representing the article's image (optional).
-     * @return the saved {@link Article}.
-     * @throws IllegalArgumentException if an article with the same designation already exists.
+     * @param article The {@link Article} entity to save.
+     * @param image A {@link MultipartFile} representing the article's image (optional).
+     * @return The saved {@link Article}.
+     * @throws IllegalArgumentException If an article with the same designation already exists.
      */
     @Override
     public Article save(Article article, MultipartFile image) {
-        if(articleRepository.existsByDesignation(article.getDesignation())){
+        if (articleRepository.existsByDesignation(article.getDesignation())) {
             throw new IllegalArgumentException("Designation already exists");
         }
         article.setId(UUID.randomUUID());
 
-        if(image != null && !image.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             article.setPicture(saveImage(image));
         }
         return articleRepository.save(article);
     }
 
     /**
-     * <p>Updates an existing article entity with new values. If an image is provided, it replaces the existing one.</p>
-     * <p>Validates that no other article with the same designation exists before updating.</p>
+     * Updates an existing article entity with new values. If an image is provided, it replaces the existing one.
+     * Validates that no other article with the same designation exists before updating.
      *
-     * @param article the {@link Article} entity with updated values.
-     * @param image a {@link MultipartFile} representing the new article's image (optional).
-     * @throws IllegalArgumentException if another article with the same designation already exists.
+     * @param article The {@link Article} entity with updated values.
+     * @param image A {@link MultipartFile} representing the new article's image (optional).
+     * @throws IllegalArgumentException If another article with the same designation already exists.
      */
     @Override
     public void update(Article article, MultipartFile image) {
-
         Article existingArticle = articleRepository.findById(article.getId()).orElseThrow();
 
-        if(articleRepository.existsInOtherArticleByDesignation(article.getId(),article.getDesignation())){
+        if (articleRepository.existsInOtherArticleByDesignation(article.getId(), article.getDesignation())) {
             throw new IllegalArgumentException("Designation already exists");
         }
 
@@ -95,7 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
         existingArticle.setVat(article.getVat());
         existingArticle.setCategory(article.getCategory());
 
-        if(image != null && !image.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             existingArticle.setPicture(saveImage(image));
         }
 
@@ -103,29 +116,28 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * <p>Marks an article as deleted by its ID.</p>
+     * Marks an article as deleted by its ID.
      *
-     * @param id the UUID of the article to delete.
-     * @throws IllegalArgumentException if the article does not exist.
+     * @param id The UUID of the article to delete.
+     * @throws IllegalArgumentException If the article does not exist.
      */
     @Transactional
     @Override
     public void delete(UUID id) {
-        if(!articleRepository.existsById(id)) {
+        if (!articleRepository.existsById(id)) {
             throw new IllegalArgumentException("Article does not exist");
         }
         articleRepository.deleteById(id);
     }
 
     /**
-     * <p>Stores the provided image on the server and returns the image name for future retrieval.</p>
+     * Stores the provided image on the server and returns the image name for future retrieval.
      *
-     * @param image a {@link MultipartFile} representing the image to be saved.
-     * @return the saved image name as a {@link String}.
-     * @throws RuntimeException if an error occurs during the file save operation.
+     * @param image A {@link MultipartFile} representing the image to be saved.
+     * @return The saved image name as a {@link String}.
+     * @throws RuntimeException If an error occurs during the file save operation.
      */
     private String saveImage(MultipartFile image) {
-
         String imageName = UUID.randomUUID() + "_" + image.getOriginalFilename();
         Path imagePath = Path.of(System.getProperty("user.dir"), "images", imageName);
         try {
